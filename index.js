@@ -41,8 +41,12 @@ async function run() {
             const result = await itemsCollection.deleteOne(query);
             res.send(result)
         })
+        // update item 
+        app.put('items/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = {_id:ObjectId(id)};
 
-
+        })
     }
     finally {
 
