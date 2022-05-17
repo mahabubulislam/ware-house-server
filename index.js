@@ -20,11 +20,18 @@ async function run() {
     try {
         await client.connect();
         const itemsCollection = client.db('ware-house').collection('items');
+        // get data 
         app.get('/items', async (req, res) => {
             const query = {}
             const cursor = await itemsCollection.find(query);
             const result = await cursor.toArray();
-            res.send(result)
+            res.send(result);
+        })
+        // post data 
+        app.post('/items', async (req, res) => {
+            const newitems = await req.body;
+            const result = await itemsCollection.insertOne(newitems);
+            res.send(result);
         })
 
 
