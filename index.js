@@ -21,18 +21,19 @@ async function run() {
     try {
         await client.connect();
         const itemsCollection = client.db('ware-house').collection('items');
+        
         // get data 
-
         app.get('/items', async (req, res) => {
             const query = {}
             const cursor = itemsCollection.find(query);
             const result = await cursor.toArray();
             res.send(result);
         })
-        // get data by user
+
+        // get single user data by email
         app.get('/myitems', async (req, res) =>{
-            const email = req.query;
-            const query = {email:email};
+            const email = req.query.email;
+            const query = {email: email};
             const cursor = itemsCollection.find(query);
             const result = await cursor.toArray();
             res.send(result)
