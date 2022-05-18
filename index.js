@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion} = require('mongodb');
-const  ObjectId = require('mongodb').ObjectId;
+const { MongoClient, ServerApiVersion } = require('mongodb');
+const ObjectId = require('mongodb').ObjectId;
 require('dotenv').config()
 const app = express();
 const port = process.env.PORT || 5000;
@@ -22,30 +22,49 @@ async function run() {
         await client.connect();
         const itemsCollection = client.db('ware-house').collection('items');
         // get data 
+        app.get('/', (req, res) =>{
+            res.send("Server running")
+        })
         app.get('/items', async (req, res) => {
             const query = {}
-            const cursor = await itemsCollection.find(query);
+            const cursor = itemsCollection.find(query);
             const result = await cursor.toArray();
             res.send(result);
         })
         // post data 
         app.post('/items', async (req, res) => {
             const newitems = req.body;
+            console.log(newitems)
             const result = await itemsCollection.insertOne(newitems);
             res.send(result);
         })
         // delete data 
         app.delete('/items/:id', async (req, res) => {
             const id = req.params.id;
-            const query = {_id: ObjectId(id)}
+            const query = { _id: ObjectId(id) };
             const result = await itemsCollection.deleteOne(query);
             res.send(result)
         })
-        // update item 
-        app.put('items/:id', async (req, res) => {
+        // get item by id 
+        app.get('/manage/:id', async (req, res) => {
             const id = req.params.id;
-            const query = {_id:ObjectId(id)};
+            const query = { _id: ObjectId(id) }
+            const result = await itemsCollection.findOne(query);
+            res.send(result)
+        })
+        // update quantiy 
+        app.put('/manage/:id', async (req, res) => {
+            const id = req.params.id;
+            const quantity = req.body;
+            console.log(quantity)
+            const filter = { _id: ObjectId(id) };
+            const option = { upsert: true };
+            const updatedDoc = {
+                $set: quantity
 
+            }
+            const result = await itemsCollection.updateOne(filter, updatedDoc, option);
+            res.send(result)
         })
     }
     finally {
