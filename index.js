@@ -16,20 +16,26 @@ app.use(cors())
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.mzq8m.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
-
+       
 async function run() {
     try {
         await client.connect();
         const itemsCollection = client.db('ware-house').collection('items');
         // get data 
-        app.get('/', (req, res) =>{
-            res.send("Server running")
-        })
+
         app.get('/items', async (req, res) => {
             const query = {}
             const cursor = itemsCollection.find(query);
             const result = await cursor.toArray();
             res.send(result);
+        })
+        // get data by user
+        app.get('/myitems', async (req, res) =>{
+            const email = req.query.email;
+            const query = {email:email};
+            const cursor = {query};
+            const result = await cursor.toArray();
+            res.send(result)
         })
         // post data 
         app.post('/items', async (req, res) => {
