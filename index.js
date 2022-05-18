@@ -31,9 +31,9 @@ async function run() {
         })
         // get data by user
         app.get('/myitems', async (req, res) =>{
-            const email = req.query.email;
+            const email = req.query;
             const query = {email:email};
-            const cursor = {query};
+            const cursor = itemsCollection.find(query);
             const result = await cursor.toArray();
             res.send(result)
         })
